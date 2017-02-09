@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e07e84381fae31f059d0ceabac19848e",
+    "content-hash": "1f9fb612146822011ff86a17ae29865d",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -560,25 +560,25 @@
         },
         {
             "name": "laravel/scout",
-            "version": "v3.0.1",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/scout.git",
-                "reference": "c742ada38f7056dba336dae441d9eaf11000cb76"
+                "reference": "2400432a48ec5d87eb39c08ee78dfa1bcfadefe6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/laravel/scout/c742ada38f7056dba336dae441d9eaf11000cb76.zip",
-                "reference": "c742ada38f7056dba336dae441d9eaf11000cb76",
+                "url": "https://packagist.phpcomposer.com/files/laravel/scout/2400432a48ec5d87eb39c08ee78dfa1bcfadefe6.zip",
+                "reference": "2400432a48ec5d87eb39c08ee78dfa1bcfadefe6",
                 "shasum": ""
             },
             "require": {
-                "illuminate/bus": "~5.4",
-                "illuminate/contracts": "~5.4",
-                "illuminate/database": "~5.4",
-                "illuminate/pagination": "~5.4",
-                "illuminate/queue": "~5.4",
-                "illuminate/support": "~5.4",
+                "illuminate/bus": "~5.3",
+                "illuminate/contracts": "~5.3",
+                "illuminate/database": "~5.3",
+                "illuminate/pagination": "~5.3",
+                "illuminate/queue": "~5.3",
+                "illuminate/support": "~5.3",
                 "php": ">=5.6.4"
             },
             "require-dev": {
@@ -587,12 +587,13 @@
                 "phpunit/phpunit": "~5.0"
             },
             "suggest": {
-                "algolia/algoliasearch-client-php": "Required to use the Algolia engine (^1.10)."
+                "algolia/algoliasearch-client-php": "Required to use the Algolia engine (^1.10).",
+                "elasticsearch/elasticsearch": "Required to use the Elasticsearch engine (^2.2)."
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
@@ -613,10 +614,11 @@
             "description": "Laravel Scout provides a driver based solution to searching your Eloquent models.",
             "keywords": [
                 "algolia",
+                "elasticsearch",
                 "laravel",
                 "search"
             ],
-            "time": "2017-02-01T16:57:41+00:00"
+            "time": "2016-12-16T17:17:36+00:00"
         },
         {
             "name": "nesbot/carbon",
