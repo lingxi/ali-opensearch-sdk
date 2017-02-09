@@ -12,7 +12,35 @@ scout 默认引擎是 algolia：https://www.algolia.com
 - 开放搜索可以从 RDS 自动同步数据，这样就不用在应用里做数据同步了（实际上，对灵析来说，因为既有 laravel 又有 tp，要做好数据同步非常麻烦）
 - 据称，开放搜索比 ElasticSearch 开源系统的QPS高4倍，查询延迟低4倍
 
-Example:
+##
+### Usage In Thinkphp
+
+```php
+<?php
+
+use Laravel\Scout\EngineManager;
+use Lingxi\AliOpenSearch\OpenSearchClient;
+use Lingxi\AliOpenSearch\OpenSearchEngine;
+use Illuminate\Support\Facades\Facade;
+
+$app->singleton(EngineManager::class, function ($app) {
+    return (new EngineManager($app))->extend('opensearch', function () {
+        return new OpenSearchEngine(new OpenSearchClient(C('scout.opensearch')));
+    });
+});
+
+function app($class)
+{
+    return Facade::getFacadeApplication()->make($class);
+}
+```
+
+## 使用
+
+请先阅读：https://laravel.com/docs/5.3/scout
+
+在 Model 里添加 Searchable Trait
+
 ```php
 $result = Contact::search(['name' => '科忠']) // 数组
             ->searchRaw('email=xxxxx') // 也可以手写复杂表达式
