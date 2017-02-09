@@ -66,6 +66,8 @@ function app($class)
 在 Model 里添加 Searchable Trait：
 
 ```php
+<?php
+
 use Lingxi\AliOpenSearch\Searchable;
 
 class Contact extends BaseModel
@@ -89,6 +91,8 @@ class Contact extends BaseModel
 开始使用：
 
 ```php
+<?php
+
 // $result 是主键数组，搜到主键数组后，再去数据库里 whereIn 查真正想要的东西
 $result = Contact::search(['name' => '科忠']) // 数组
             ->searchRaw('email=xxxxx') // 也可以手写复杂表达式
@@ -137,5 +141,4 @@ CloudsearchSearch {#96 ▼
 
 ## 扩展
 
-在 `Lingxi\AliOpenSearch\ExtendBuilder` 扩展 scout 的 builder，
-别忘了在 `Lingxi\AliOpenSearch\QueryBuilder` 将你扩展的转化为 opensearch 需要的参数
+在 `Lingxi\AliOpenSearch\ExtendBuilder` 扩展 scout 的 builder，别忘了在 `Lingxi\AliOpenSearch\QueryBuilder` 将你扩展的转化为 opensearch 需要的参数
