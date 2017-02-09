@@ -22,7 +22,7 @@ class OpenSearchEngine extends Engine
      */
     public function __construct(OpenSearchClient $opensearch)
     {
-        $this->opensearch = $opensearch;
+        $this->opensearch = $opensearch->getCloudSearchSearch();
     }
 
     /**
@@ -56,16 +56,62 @@ class OpenSearchEngine extends Engine
      */
     public function search(Builder $builder)
     {
-        return $this->opensearch->search('lingxi', 'name:科忠', ['limit' => $builder->limit]);
+        return $this->performSearch($builder);
     }
 
     public function paginate(Builder $builder, $perPage, $page)
     {
-
+        return $this->performSearch($builder, [
+            'start' => $perPage * ($page - 1),
+        ]);
     }
 
+    protected function buildLaravelBuilderIntoOpensearch($builder)
+    {
+        return (new QueryBuilder($this->opensearch))->build($builder);
+    }
+
+    protected function performSearch(Builder $builder, array $opts = [])
+    {
+        return json_decode($this->buildLaravelBuilderIntoOpensearch($builder)->search($opts), true);
+    }
+
+    /**
+     * Map the given results to instances of the given model.
+     *
+     * @param  mixed  $results
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function map($results, $model)
     {
+        // 只返回主键，外面去查数据库，爱干嘛干嘛
+        return $this->mapIds($results);
 
+        // return $model->whereIn(
+        //     $model->getQualifiedKeyName(), $this->mapIds($results)
+        // )->get()->keyBy($model->getKeyName());
+    }
+
+    /**
+     * Pluck and return the primary keys of the given results.
+     *
+     * @param  mixed  $results
+     * @return \Illuminate\Support\Collection
+     */
+    public function mapIds($results)
+    {
+        return collect($results['result']['items'])->pluck('id')->values();
+    }
+
+    /**
+     * Get the total count from a raw result returned by the engine.
+     *
+     * @param  mixed  $results
+     * @return int
+     */
+    public function getTotalCount($results)
+    {
+        return $results['result']['items']['total'];
     }
 }
