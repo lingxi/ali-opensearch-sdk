@@ -134,3 +134,8 @@ CloudsearchSearch {#96 ▼
   -path: "/search"
 }
 ```
+
+## 扩展
+
+在 `Lingxi\AliOpenSearch\ExtendBuilder` 扩展 scout 的 builder，
+别忘了在 `Lingxi\AliOpenSearch\QueryBuilder` 将你扩展的转化为 opensearch 需要的参数
