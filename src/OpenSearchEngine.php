@@ -56,14 +56,15 @@ class OpenSearchEngine extends Engine
      */
     public function search(Builder $builder)
     {
-        return $this->performSearch($builder);
+        return $this->performSearch($this->buildLaravelBuilderIntoOpensearch($builder));
     }
 
     public function paginate(Builder $builder, $perPage, $page)
     {
-        return $this->performSearch($builder, [
-            'start' => $perPage * ($page - 1),
-        ]);
+        $builder = $this->buildLaravelBuilderIntoOpensearch($builder);
+        $builder->setStartHit($perPage * ($page - 1));
+
+        return $this->performSearch($builder);
     }
 
     protected function buildLaravelBuilderIntoOpensearch($builder)
@@ -71,9 +72,9 @@ class OpenSearchEngine extends Engine
         return (new QueryBuilder($this->opensearch))->build($builder);
     }
 
-    protected function performSearch(Builder $builder, array $opts = [])
+    protected function performSearch(Builder $builder)
     {
-        return json_decode($this->buildLaravelBuilderIntoOpensearch($builder)->search($opts), true);
+        return json_decode($builder->search(), true);
     }
 
     /**

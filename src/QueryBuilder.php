@@ -19,9 +19,9 @@ class QueryBuilder
     public function build($builder)
     {
         $this->index($builder->index ?: $builder->model->searchableAs());
-        $this->query($builder->query);
-        $this->filters($builder->wheres);
-        $this->limit($builder->limit ?: 20);
+        $this->query($builder->query, $builder->rawQuerys);
+        $this->filters($builder->wheres, $builder->rawWheres);
+        $this->hit($builder->limit ?: 20);
         $this->sort($builder->orders);
 
         $this->opensearch->setFormat('json');
@@ -29,6 +29,11 @@ class QueryBuilder
         return $this->opensearch;
     }
 
+    /**
+     * 搜索的应用
+     * @param  array|string $index
+     * @return null
+     */
     protected function index($index)
     {
         if (is_array($index)) {
@@ -46,7 +51,7 @@ class QueryBuilder
      * @param  array $wheres
      * @return null
      */
-    protected function filters($wheres)
+    protected function filters(array $wheres, array $rawWheres)
     {
         foreach ($wheres as $key => $value) {
             $operator = $value[0];
@@ -55,7 +60,12 @@ class QueryBuilder
                 // literal类型的字段值必须要加双引号，支持所有的关系运算，不支持算术运算
                 $value = '"' . $value . '"';
             }
+
             $this->opensearch->addFilter($key . $operator . $value, 'AND');
+        }
+
+        foreach ($rawWheres as $key => $value) {
+            $this->opensearch->addFilter($value, 'AND');
         }
     }
 
@@ -65,23 +75,39 @@ class QueryBuilder
      * @param  array|string $query
      * @return null
      */
-    protected function query($query)
+    protected function query($query, $rawQuerys)
     {
         if (!is_string($query)) {
-            $query = collect($query)->map(function ($value, $key) {
-                return $key . ':' . $value;
-            })->implode(' AND ');
+            $query = collect($query)
+                ->map(function ($value, $key) {
+                    return $key . ':' . $value;
+                })
+                ->implode(' AND ');
         }
+
+        $query = $rawQuerys ? $query . ' AND ' . implode($rawQuerys, ' AND ') : $query;
 
         $this->opensearch->setQueryString($query);
     }
 
-    protected function limit($limit)
+    /**
+     * 返回文档的最大数量
+     * @see https://help.aliyun.com/document_detail/29156.html
+     * @param  integer $limit
+     * @return null
+     */
+    protected function hit(int $limit)
     {
         $this->opensearch->setHits($limit);
     }
 
-    protected function sort($orders)
+    /**
+     * 排序sort子句
+     * @see https://help.aliyun.com/document_detail/29159.html
+     * @param  array $orders
+     * @return null
+     */
+    protected function sort(array $orders)
     {
         foreach ($orders as $key => $value) {
             $this->opensearch->addSort($value['column'], $value['column'] == 'asc' ? CloudsearchSearch::SORT_INCREASE : CloudsearchSearch::SORT_DECREASE);
