@@ -2,15 +2,15 @@
 
 use Lingxi\AliOpenSearch\OpenSearchClient;
 
-class ExampleTest extends PHPUnit_Framework_TestCase
+class SearchTest extends PHPUnit_Framework_TestCase
 {
     protected $opensearchClient = null;
 
     public function setUp()
     {
         $this->opensearchClient = new OpenSearchClient([
-            'access_key_id'     => 'XtdfTYARVUEyWzH5',
-            'access_key_secret' => 'OXttuQgTOxT8kDEYvRsWkj0nxf9iIn',
+            'access_key_id'     => '',
+            'access_key_secret' => '',
             'debug'             => true,
         ]);
     }
