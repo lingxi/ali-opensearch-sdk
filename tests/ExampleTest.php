@@ -1,18 +1,29 @@
 <?php
 
-use Lingxi\AliOpenSearch\Client;
+use Lingxi\AliOpenSearch\OpenSearchClient;
 
 class ExampleTest extends PHPUnit_Framework_TestCase
 {
-    public function test_something()
+    protected $opensearchClient = null;
+
+    public function setUp()
     {
-        $client = new Client([
-            'access_key_id' => '',
-            'access_key_secret' => '',
-            'debug' => true,
+        $this->opensearchClient = new OpenSearchClient([
+            'access_key_id'     => 'XtdfTYARVUEyWzH5',
+            'access_key_secret' => 'OXttuQgTOxT8kDEYvRsWkj0nxf9iIn',
+            'debug'             => true,
         ]);
-        var_dump($client->search('lingxi', 'name:科忠'));
-        var_dump($client->getCloudSearchClient()->getRequest());
-        $this->assertTrue(true);
+    }
+
+    public function test_search()
+    {
+        $result = $this->opensearchClient->search('lingxi', 'name:科忠', ['limit' => 1]);
+
+        $this->assertEquals($result['status'], 'OK');
+    }
+
+    public function test_suggest()
+    {
+
     }
 }

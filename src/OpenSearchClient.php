@@ -9,7 +9,7 @@ use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
  * aliyun opensearch sdk 封装
  * @see https://help.aliyun.com/document_detail/29175.html
  */
-class Client
+class OpenSearchClient
 {
     /**
      * 根据自己的应用区域选择API
@@ -26,14 +26,14 @@ class Client
      */
     protected $cloudSearchClient = null;
 
-    public function __construct($config)
+    public function __construct(array $configs = [])
     {
-        $host  = isset($config['host']) && $config['host'] ? $config['host'] : $this->host;
-        $debug = isset($config['debug']) ? $config['debug'] : false;
+        $host  = isset($configs['host']) && $configs['host'] ? $configs['host'] : $this->host;
+        $debug = isset($configs['debug']) ? $configs['debug'] : false;
 
         $this->cloudSearchClient = new CloudsearchClient(
-            $config['access_key_id'],
-            $config['access_key_secret'],
+            $configs['access_key_id'],
+            $configs['access_key_secret'],
             [
                 'host'  => $host,
                 'debug' => $debug,
@@ -60,16 +60,21 @@ class Client
         return new CloudsearchSearch($this->getCloudSearchClient());
     }
 
-    public function search($index, $queryString)
+    /**
+     * perform search
+     * @param  string $index       指定一个应用用于搜索
+     * @param  string $queryString 指定搜索关键词
+     * @param  array  $options     搜索参数，分页等
+     * @return array
+     */
+    public function search(string $index, string $queryString, array $options = [])
     {
         $client = $this->getCloudSearchSearch();
 
-        // 指定一个应用用于搜索
         $client->addIndex($index);
-        // 指定搜索关键词
         $client->setQueryString($queryString);
-        // 指定返回的搜索结果的格式为 json
         $client->setFormat('json');
+        isset($options['limit']) && $client->setHits($options['limit']);
 
         return json_decode($client->search(), true);
     }
