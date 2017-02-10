@@ -2,10 +2,10 @@
 
 namespace Lingxi\AliOpenSearch;
 
-class ExtendBuilder extends \Laravel\Scout\Builder
+class ExtendedBuilder extends \Laravel\Scout\Builder
 {
-    public $rawWheres;
-    public $rawQuerys;
+    public $rawWheres = [];
+    public $rawQuerys = [];
 
     /**
      * Add a constraint to the search query.
@@ -24,16 +24,16 @@ class ExtendBuilder extends \Laravel\Scout\Builder
         return $this;
     }
 
-    public function whereRaw($rawWhere)
+    public function whereRaw(string $rawWhere)
     {
         $this->rawWheres[] = $rawWhere;
 
         return $this;
     }
 
-    public function searchRaw($rawQuerys)
+    public function searchRaw(string $rawQuery)
     {
-        $this->rawQuerys[] = $rawQuerys;
+        $this->rawQuerys[] = $rawQuery;
 
         return $this;
     }

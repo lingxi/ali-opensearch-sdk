@@ -3,6 +3,7 @@
 namespace Lingxi\AliOpenSearch;
 
 use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
+use Illuminate\Support\Facades\Config;
 
 /**
  * laravel eloquent builder scheme to opensearch scheme
@@ -36,12 +37,14 @@ class QueryBuilder
      */
     protected function index($index)
     {
+        $prefix = Config::get('scout.prefix');
+
         if (is_array($index)) {
             foreach ($index as $key => $value) {
-                $this->opensearch->addIndex($value);
+                $this->opensearch->addIndex($prefix . $value);
             }
         } else {
-            $this->opensearch->addIndex($index);
+            $this->opensearch->addIndex($prefix . $index);
         }
     }
 

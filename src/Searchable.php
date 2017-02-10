@@ -15,6 +15,7 @@ trait Searchable
      */
     public function searchableUsing()
     {
+        // \Laravel\Scout\Searchable 里没有传参数，应该是个 bug
         return app(EngineManager::class)->engine('opensearch');
     }
 
@@ -27,6 +28,6 @@ trait Searchable
      */
     public static function search($query, $callback = null)
     {
-        return new ExtendBuilder(new static, $query, $callback);
+        return new ExtendedBuilder(new static, $query, $callback);
     }
 }
