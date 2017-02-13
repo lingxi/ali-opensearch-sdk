@@ -2,19 +2,19 @@
 
 namespace Lingxi\AliOpenSearch;
 
-use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
 use Illuminate\Support\Facades\Config;
+use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
 
 /**
  * laravel eloquent builder scheme to opensearch scheme
  */
 class QueryBuilder
 {
-    protected $opensearch;
+    protected $cloudsearchSearch;
 
-    public function __construct(OpenSearchClient $opensearch)
+    public function __construct(CloudsearchSearch $cloudsearchSearch)
     {
-        $this->opensearch = $opensearch;
+        $this->cloudsearchSearch = $cloudsearchSearch;
     }
 
     public function build($builder)
@@ -25,9 +25,9 @@ class QueryBuilder
         $this->hit($builder->limit ?: 20);
         $this->sort($builder->orders);
 
-        $this->opensearch->setFormat('json');
+        $this->cloudsearchSearch->setFormat('json');
 
-        return $this->opensearch;
+        return $this->cloudsearchSearch;
     }
 
     /**
@@ -41,15 +41,16 @@ class QueryBuilder
 
         if (is_array($index)) {
             foreach ($index as $key => $value) {
-                $this->opensearch->addIndex($prefix . $value);
+                $this->cloudsearchSearch->addIndex($prefix . $value);
             }
         } else {
-            $this->opensearch->addIndex($prefix . $index);
+            $this->cloudsearchSearch->addIndex($prefix . $index);
         }
     }
 
     /**
-     * 过滤filter子句
+     * 过滤 filter 子句
+     *
      * @see https://help.aliyun.com/document_detail/29158.html
      * @param  array $wheres
      * @return null
@@ -64,16 +65,17 @@ class QueryBuilder
                 $value = '"' . $value . '"';
             }
 
-            $this->opensearch->addFilter($key . $operator . $value, 'AND');
+            $this->cloudsearchSearch->addFilter($key . $operator . $value, 'AND');
         }
 
         foreach ($rawWheres as $key => $value) {
-            $this->opensearch->addFilter($value, 'AND');
+            $this->cloudsearchSearch->addFilter($value, 'AND');
         }
     }
 
     /**
-     * 查询query子句
+     * 查询 query 子句
+     *
      * @see https://help.aliyun.com/document_detail/29157.html
      * @param  array|string $query
      * @return null
@@ -90,7 +92,7 @@ class QueryBuilder
 
         $query = $rawQuerys ? $query . ' AND ' . implode($rawQuerys, ' AND ') : $query;
 
-        $this->opensearch->setQueryString($query);
+        $this->cloudsearchSearch->setQueryString($query);
     }
 
     /**
@@ -101,7 +103,7 @@ class QueryBuilder
      */
     protected function hit(int $limit)
     {
-        $this->opensearch->setHits($limit);
+        $this->cloudsearchSearch->setHits($limit);
     }
 
     /**
@@ -113,7 +115,7 @@ class QueryBuilder
     protected function sort(array $orders)
     {
         foreach ($orders as $key => $value) {
-            $this->opensearch->addSort($value['column'], $value['column'] == 'asc' ? CloudsearchSearch::SORT_INCREASE : CloudsearchSearch::SORT_DECREASE);
+            $this->cloudsearchSearch->addSort($value['column'], $value['column'] == 'asc' ? CloudsearchSearch::SORT_INCREASE : CloudsearchSearch::SORT_DECREASE);
         }
     }
 }

@@ -22,9 +22,9 @@ class OpenSearchClient
 
     /**
      * aliyun opensearch client
-     * @var Lingxi\AliOpenSearch\Sdk\CloudsearchClient
+     * @var CloudsearchClient
      */
-    protected $cloudSearchClient = null;
+    protected $cloudSearchClient;
 
     public function __construct(array $configs = [])
     {
@@ -44,7 +44,7 @@ class OpenSearchClient
 
     /**
      * 使用自己的 accesskey 和 secret 实例化一个 aliyun opensearch client
-     * @return Lingxi\AliOpenSearch\Sdk\CloudsearchClient
+     * @return CloudsearchClient
      */
     public function getCloudSearchClient()
     {
@@ -53,7 +53,7 @@ class OpenSearchClient
 
     /**
      * 实例化一个搜索类
-     * @return Lingxi\AliOpenSearch\Sdk\CloudsearchSearch
+     * @return CloudsearchSearch
      */
     public function getCloudSearchSearch()
     {

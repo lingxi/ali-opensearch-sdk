@@ -4,6 +4,7 @@ namespace Lingxi\AliOpenSearch;
 
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
+use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
 
 class OpenSearchEngine extends Engine
 {
@@ -12,7 +13,7 @@ class OpenSearchEngine extends Engine
      *
      * @var \Lingxi\AliOpenSearch\OpenSearchClient
      */
-    protected $opensearch;
+    protected $cloudsearchSearch;
 
     /**
      * Create a new engine instance.
@@ -22,7 +23,7 @@ class OpenSearchEngine extends Engine
      */
     public function __construct(OpenSearchClient $opensearch)
     {
-        $this->opensearch = $opensearch->getCloudSearchSearch();
+        $this->cloudsearchSearch = $opensearch->getCloudSearchSearch();
     }
 
     /**
@@ -69,12 +70,12 @@ class OpenSearchEngine extends Engine
 
     protected function buildLaravelBuilderIntoOpensearch($builder)
     {
-        return (new QueryBuilder($this->opensearch))->build($builder);
+        return (new QueryBuilder($this->cloudsearchSearch))->build($builder);
     }
 
-    protected function performSearch(Builder $builder)
+    protected function performSearch(CloudsearchSearch $search)
     {
-        return json_decode($builder->search(), true);
+        return json_decode($search->search(), true);
     }
 
     /**
@@ -113,6 +114,6 @@ class OpenSearchEngine extends Engine
      */
     public function getTotalCount($results)
     {
-        return $results['result']['items']['total'];
+        return $results['result']['total'];
     }
 }
