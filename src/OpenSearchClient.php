@@ -2,8 +2,9 @@
 
 namespace Lingxi\AliOpenSearch;
 
-use Lingxi\AliOpenSearch\Sdk\CloudsearchClient;
+use Lingxi\AliOpenSearch\Sdk\CloudsearchDoc;
 use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
+use Lingxi\AliOpenSearch\Sdk\CloudsearchClient;
 
 /**
  * aliyun opensearch sdk 封装
@@ -26,6 +27,11 @@ class OpenSearchClient
      */
     protected $cloudSearchClient;
 
+    /**
+     * @var null|CloudsearchSearch
+     */
+    protected $cloudsearchSearch = null;
+
     public function __construct(array $configs = [])
     {
         $host  = isset($configs['host']) && $configs['host'] ? $configs['host'] : $this->host;
@@ -44,6 +50,7 @@ class OpenSearchClient
 
     /**
      * 使用自己的 accesskey 和 secret 实例化一个 aliyun opensearch client
+     *
      * @return CloudsearchClient
      */
     public function getCloudSearchClient()
@@ -53,10 +60,26 @@ class OpenSearchClient
 
     /**
      * 实例化一个搜索类
+     *
      * @return CloudsearchSearch
      */
     public function getCloudSearchSearch()
     {
-        return new CloudsearchSearch($this->getCloudSearchClient());
+        if ($this->cloudsearchSearch === null) {
+            $this->cloudsearchSearch = new CloudsearchSearch($this->getCloudSearchClient());
+        }
+
+        return $this->cloudsearchSearch;
+    }
+
+    /**
+     * 获取　opensearch 文档接口客户端
+     *
+     * @param $indexName
+     * @return CloudsearchDoc
+     */
+    public function getCloudSearchDoc($indexName)
+    {
+         return new CloudsearchDoc($indexName, $this->getCloudSearchClient());
     }
 }
