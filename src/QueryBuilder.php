@@ -85,7 +85,7 @@ class QueryBuilder
         if (!is_string($query)) {
             $query = collect($query)
                 ->map(function ($value, $key) {
-                    return $key . ':' . $value;
+                    return $key . ':\'' . $value . '\'';
                 })
                 ->implode(' AND ');
         }
