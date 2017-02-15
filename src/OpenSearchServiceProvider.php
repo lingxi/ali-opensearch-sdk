@@ -4,6 +4,7 @@ namespace Lingxi\AliOpenSearch;
 
 use Laravel\Scout\EngineManager;
 use Illuminate\Support\ServiceProvider;
+use Lingxi\AliOpenSearch\Console\FlushCommand;
 
 class OpenSearchServiceProvider extends ServiceProvider
 {
@@ -21,5 +22,11 @@ class OpenSearchServiceProvider extends ServiceProvider
         $this->app[EngineManager::class]->extend('opensearch', function () {
             return new OpenSearchEngine($this->app[OpenSearchClient::class]);
         });
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                FlushCommand::class,
+            ]);
+        }
     }
 }
