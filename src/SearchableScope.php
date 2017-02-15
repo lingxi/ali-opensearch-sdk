@@ -18,7 +18,7 @@ class SearchableScope extends ScoutSearchableScope
     public function extend(EloquentBuilder $builder)
     {
         $builder->macro('searchable', function (EloquentBuilder $builder) {
-            $builder->chunk(Config::get('scout.unsearchable.count', 100), function ($models) use ($builder) {
+            $builder->chunk(Config::get('scout.count.unsearchable', 100), function ($models) use ($builder) {
                 $models->searchable();
 
                 event(new ModelsImported($models));
@@ -26,8 +26,14 @@ class SearchableScope extends ScoutSearchableScope
         });
 
         $builder->macro('unsearchable', function (EloquentBuilder $builder) {
-            $builder->chunk(Config::get('scout.unsearchable.count', 100), function ($models) use ($builder) {
+            $builder->chunk(Config::get('scout.count.unsearchable', 100), function ($models) use ($builder) {
                 $models->unsearchable();
+            });
+        });
+
+        $builder->macro('updateSearchable', function (EloquentBuilder $builder) {
+            $builder->chunk(Config::get('scout.count.updateSearchable', 100), function ($models) use ($builder) {
+                $models->updateSearchable();
             });
         });
     }
