@@ -3,10 +3,20 @@
 namespace Lingxi\AliOpenSearch;
 
 use Laravel\Scout\EngineManager;
+use Laravel\Scout\ModelObserver;
 
 trait Searchable
 {
     use \Laravel\Scout\Searchable;
+
+    public static function bootSearchable()
+    {
+        static::addGlobalScope(new SearchableScope);
+
+        static::observe(new ModelObserver);
+
+        (new static)->registerSearchableMacros();
+    }
 
     /**
      * Get the Scout engine for the model.

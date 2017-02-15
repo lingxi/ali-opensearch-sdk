@@ -20,6 +20,8 @@
 
 namespace Lingxi\AliOpenSearch\Sdk;
 
+use Exception;
+
 /**
  * opensearch 文档接口。
  *
@@ -167,6 +169,19 @@ class CloudsearchDoc
      * @param string $tableName 指定要从哪个表删除记录。
      * @return string 返回API返回的结果。
      */
+    public function delete($docs, $tableName)
+    {
+        return $this->action($docs, $tableName, self::SIGN_MODE);
+    }
+
+    /**
+     * 删除文档
+     *
+     * 删除指定表中的doc。
+     * @param array $docs 指定要删除的doc列表，必须含有主键。
+     * @param string $tableName 指定要从哪个表删除记录。
+     * @return string 返回API返回的结果。
+     */
     public function remove($docs, $tableName)
     {
         return $this->action($docs, $tableName, self::SIGN_MODE);
@@ -191,14 +206,15 @@ class CloudsearchDoc
         }
 
         $params = array(
-            'action'     => "push",
+            'action'        => "push",
             'items'      => json_encode($docs),
             'table_name' => $tableName,
         );
 
-        if ($signMode == self::SIGN_MODE) {
+        if ($signMode == self::SIGN_MODE) {;
             $params['sign_mode'] = self::SIGN_MODE;
         }
+
         return $this->client->call($this->path, $params, self::METHOD);
     }
 

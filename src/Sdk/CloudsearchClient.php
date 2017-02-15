@@ -110,7 +110,7 @@ class CloudsearchClient
      * 请求API的时间，单位为秒。
      * @var int
      */
-    private $timeout = 10;
+    private $timeout = 30;
     /**
      * 请求API的连接超时时间，单位为秒。
      * @var int
