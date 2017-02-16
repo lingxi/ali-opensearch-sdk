@@ -55,7 +55,10 @@ function app($class)
 
 ### Laravel
 
-@todo
+```php
+Laravel\Scout\ScoutServiceProvider::class,
+Lingxi\AliOpenSearch\OpenSearchServiceProvider::class,
+```
 
 ---
 
