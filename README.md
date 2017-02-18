@@ -18,42 +18,20 @@ scout 默认引擎是 algolia：https://www.algolia.com
 
 ## 初始化
 
-### Thinkphp
-
 ```shell
 composer require lingxi/ali-opensearch-sdk
 ```
 
+## 配置
+
 ```php
-// 配置
 'scout' => [
     'driver' => 'opensearch',
     'prefix' => '',
 ],
 ```
 
-```php
-// 注册服务
-<?php
-
-use Laravel\Scout\EngineManager;
-use Lingxi\AliOpenSearch\OpenSearchClient;
-use Lingxi\AliOpenSearch\OpenSearchEngine;
-use Illuminate\Support\Facades\Facade;
-
-$app->singleton(EngineManager::class, function ($app) {
-    return (new EngineManager($app))->extend('opensearch', function () {
-        return new OpenSearchEngine(new OpenSearchClient(C('scout.opensearch')));
-    });
-});
-
-function app($class)
-{
-    return Facade::getFacadeApplication()->make($class);
-}
-```
-
-### Laravel
+## 注册服务
 
 ```php
 Laravel\Scout\ScoutServiceProvider::class,
@@ -73,7 +51,7 @@ Lingxi\AliOpenSearch\OpenSearchServiceProvider::class,
 
 use Lingxi\AliOpenSearch\Searchable;
 
-class Contact extends BaseModel
+class FormFill extends BaseModel
 {
     use Searchable;
 
@@ -87,7 +65,65 @@ class Contact extends BaseModel
         // 也可以在使用时通过 Contact::within(['contacts', 'forms']) 指定
         return 'contacts';
     }
-    ...
+
+    public function toSearchableDocCallbacks($actions = ['update', 'delete'])
+    {
+        $callbacks = [
+            'form_fills' => []
+        ];
+
+        if (is_array($this->data)) {
+            if (in_array('update', $actions)) {
+                $callbacks['form_fills']['update'] = function () {
+                    $result = [];
+
+                    foreach ($this->data as $key => $value) {
+                        $value = $this->unserialize($value);
+                        $result[] = [
+                            'cmd' => 'update',
+                            'fields' => [
+                                'id' => bin2hex(md5($this->id . $this->team_id . $key)),
+                                'team_id' => $this->team_id,
+                                'form_id' => $this->form_id,
+                                'formfill_id' => $this->id,
+                                'contact_id' => $this->contact_id,
+                                'broadcast_channel_id' => $this->broadcast_channel_id,
+                                'create_time' => $this->create_time ? $this->create_time->timestamp : 0,
+                                'update_time' => $this->update_time ? $this->update_time->timestamp : 0,
+                                'key' => $key,
+                                'value' => is_array($value) ? join(' ', $value) : $value,
+                            ],
+                        ];
+                    }
+
+                    return $result;
+                };
+            }
+
+            if (in_array('delete', $actions)) {
+                $callbacks['form_fills']['delete'] = function () {
+                    return self::search(['formfill_id' => $this->id])
+                        ->get()
+                        ->map(function ($item) {
+                            return [
+                                'cmd' => 'delete',
+                                'fields' => [
+                                    'id' => $item['id'],
+                                ],
+                            ];
+                        })
+                        ->toArray();
+                };
+            }
+        }
+
+        return $callbacks;
+    }
+
+    public function getSearchableFields()
+    {
+        return ['id', 'formfill_id'];
+    }
 }
 ```
 
