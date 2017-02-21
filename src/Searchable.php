@@ -2,9 +2,10 @@
 
 namespace Lingxi\AliOpenSearch;
 
-use Laravel\Scout\ModelObserver;
 use Laravel\Scout\EngineManager;
+use Laravel\Scout\ModelObserver;
 use Lingxi\AliOpenSearch\Jobs\MakeSearchable;
+use Lingxi\AliOpenSearch\Jobs\RemoveSearchable;
 use Lingxi\AliOpenSearch\Jobs\UpdateSearchable;
 use Laravel\Scout\Searchable as ScoutSearchable;
 use Illuminate\Support\Collection as BaseCollection;
@@ -86,6 +87,27 @@ trait Searchable
         }
 
         dispatch((new UpdateSearchable($models))
+            ->onQueue($models->first()->syncWithSearchUsingQueue())
+            ->onConnection($models->first()->syncWithSearchUsing()));
+    }
+
+    /**
+     * Dispatch the job to remove the given models searchable.
+     *
+     * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @return void
+     */
+    public function queueRemoveFromSearch($models)
+    {
+        if ($models->isEmpty()) {
+            return;
+        }
+
+        if (! config('scout.queue')) {
+            return $models->first()->searchableUsing()->remove($models);
+        }
+
+        dispatch((new RemoveSearchable($models))
             ->onQueue($models->first()->syncWithSearchUsingQueue())
             ->onConnection($models->first()->syncWithSearchUsing()));
     }

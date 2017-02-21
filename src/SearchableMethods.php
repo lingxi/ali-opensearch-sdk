@@ -16,7 +16,7 @@ trait SearchableMethods
         $this->queueUpdateSearchable(new Collection([$this]));
     }
 
-    public function deleteSearchable()
+    public function removeSearchable()
     {
         $this->queueRemoveFromSearch(new Collection([$this]));
     }

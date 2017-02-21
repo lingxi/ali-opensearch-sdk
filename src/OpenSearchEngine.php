@@ -113,6 +113,14 @@ class OpenSearchEngine extends Engine
     }
 
     /**
+     * Equals remove
+     */
+    public function remove($models)
+    {
+        return $this->delete($models);
+    }
+
+    /**
      * 获取模型的操作数据
      *
      * @param \Illuminate\Database\Eloquent\Collection $models
