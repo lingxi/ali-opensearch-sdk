@@ -20,6 +20,8 @@
 
 namespace Lingxi\AliOpenSearch\Sdk;
 
+use Exception;
+
 /**
  * Cloudsearch service。
  *

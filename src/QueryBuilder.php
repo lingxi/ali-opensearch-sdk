@@ -101,7 +101,7 @@ class QueryBuilder
      * @param  integer $limit
      * @return null
      */
-    protected function hit(int $limit)
+    protected function hit($limit)
     {
         $this->cloudsearchSearch->setHits($limit);
     }
