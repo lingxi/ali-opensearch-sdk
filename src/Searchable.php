@@ -2,8 +2,9 @@
 
 namespace Lingxi\AliOpenSearch;
 
-use Laravel\Scout\EngineManager;
 use Laravel\Scout\ModelObserver;
+use Laravel\Scout\EngineManager;
+use Lingxi\AliOpenSearch\Jobs\MakeSearchable;
 use Lingxi\AliOpenSearch\Jobs\UpdateSearchable;
 use Laravel\Scout\Searchable as ScoutSearchable;
 use Illuminate\Support\Collection as BaseCollection;
@@ -14,7 +15,7 @@ trait Searchable
 
     use SearchableMethods;
 
-	abstract public function toSearchableDocCallbacks($actions = ['update', 'delete']);
+    abstract public function toSearchableDocCallbacks($actions = ['update', 'delete']);
 
     public static function bootSearchable()
     {
@@ -42,10 +43,10 @@ trait Searchable
         });
     }
 
-	public function getSearchableFields()
-	{
-		return 'id';
-	}
+    public function getSearchableFields()
+    {
+        return 'id';
+    }
 
     /**
      * Dispatch the job to make the given models searchable.
