@@ -4,12 +4,15 @@ namespace Lingxi\AliOpenSearch;
 
 use Laravel\Scout\EngineManager;
 use Laravel\Scout\ModelObserver;
-use Illuminate\Support\Collection as BaseCollection;
 use Lingxi\AliOpenSearch\Jobs\UpdateSearchable;
+use Laravel\Scout\Searchable as ScoutSearchable;
+use Illuminate\Support\Collection as BaseCollection;
 
 trait Searchable
 {
-    use \Laravel\Scout\Searchable;
+    use ScoutSearchable;
+
+    use SearchableMethods;
 
     public static function bootSearchable()
     {

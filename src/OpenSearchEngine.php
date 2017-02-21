@@ -200,24 +200,29 @@ class OpenSearchEngine extends Engine
     {
         $fields = $model->getSearchableFields();
 
-        return collect(array_map(function ($item) use ($fields) {
-            $result = [];
-            foreach ($fields as $field) {
-                $result[$field] = $item[$field];
-            }
-            return $result;
-        }, $results['result']['items']));
+        if (is_array($fields)) {
+            return collect(array_map(function ($item) use ($fields) {
+                $result = [];
+                foreach ($fields as $field) {
+                    $result[$field] = $item[$field];
+                }
+                return $result;
+            }, $results['result']['items']));
+        }
+
+        return $this->mapIds($results, $field);
     }
 
     /**
      * Pluck and return the primary keys of the given results.
      *
      * @param  mixed  $results
+     * @param  string  $field
      * @return \Illuminate\Support\Collection
      */
-    public function mapIds($results)
+    public function mapIds($results, $field = 'id')
     {
-        return collect($results['result']['items'])->pluck('id')->values();
+        return collect($results['result']['items'])->pluck($field)->values();
     }
 
     /**
