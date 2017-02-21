@@ -14,6 +14,8 @@ trait Searchable
 
     use SearchableMethods;
 
+	abstract public function toSearchableDocCallbacks();
+
     public static function bootSearchable()
     {
         static::addGlobalScope(new SearchableScope);
@@ -39,6 +41,11 @@ trait Searchable
             $self->queueUpdateSearchable($this);
         });
     }
+
+	public function getSearchableFields()
+	{
+		return 'id';
+	}
 
     /**
      * Dispatch the job to make the given models searchable.
