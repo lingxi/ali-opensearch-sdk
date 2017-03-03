@@ -37,14 +37,12 @@ class QueryBuilder
      */
     protected function index($index)
     {
-        $prefix = Config::get('scout.prefix');
-
         if (is_array($index)) {
             foreach ($index as $key => $value) {
-                $this->cloudsearchSearch->addIndex($prefix . $value);
+                $this->cloudsearchSearch->addIndex($value);
             }
         } else {
-            $this->cloudsearchSearch->addIndex($prefix . $index);
+            $this->cloudsearchSearch->addIndex($index);
         }
     }
 
