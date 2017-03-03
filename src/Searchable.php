@@ -49,6 +49,25 @@ trait Searchable
         return 'id';
     }
 
+    public function scopeMakeSearchableQuery($query, $self)
+    {
+        return $query->orderBy($self->getKeyName());
+    }
+
+    /**
+     * Make all instances of the model searchable.
+     *
+     * @return void
+     */
+    public static function makeAllSearchable()
+    {
+        $self = new static();
+
+        $self->newQuery()
+            ->makeSearchableQuery($self)
+            ->searchable();
+    }
+
     /**
      * Dispatch the job to make the given models searchable.
      *
