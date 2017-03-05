@@ -219,7 +219,7 @@ class OpenSearchEngine extends Engine
             }, $results['result']['items']));
         }
 
-        return $this->mapIds($results, $field);
+        return $this->mapIds($results, $fields);
     }
 
     /**

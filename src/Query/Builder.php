@@ -75,13 +75,17 @@ class Builder
     /**
      * 查询 query 子句
      *
+     * @example (name:'rry' AND age:'10') OR (name: 'lirui')
+     *
      * @see https://help.aliyun.com/document_detail/29157.html
-     * @param  array|string $query
+     * @param  mixed $query
      * @return null
      */
     protected function query($query, $rawQuerys)
     {
-        if (!is_string($query)) {
+        if ($query instanceof QueryStructureBuilder) {
+            $query = $query->toSql();
+        } elseif (! is_string($query)) {
             $query = collect($query)
                 ->map(function ($value, $key) {
                     return $key . ':\'' . $value . '\'';
