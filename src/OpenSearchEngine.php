@@ -2,8 +2,9 @@
 
 namespace Lingxi\AliOpenSearch;
 
-use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
+use Lingxi\AliOpenSearch\Query\Builder;
+use Laravel\Scout\Builder as ScoutBuilder;
 use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
 
 class OpenSearchEngine extends Engine
@@ -174,12 +175,12 @@ class OpenSearchEngine extends Engine
      * @param  \Laravel\Scout\Builder  $builder
      * @return mixed
      */
-    public function search(Builder $builder)
+    public function search(ScoutBuilder $builder)
     {
         return $this->performSearch($this->buildLaravelBuilderIntoOpensearch($builder));
     }
 
-    public function paginate(Builder $builder, $perPage, $page)
+    public function paginate(ScoutBuilder $builder, $perPage, $page)
     {
         $builder = $this->buildLaravelBuilderIntoOpensearch($builder);
         $builder->setStartHit($perPage * ($page - 1));
@@ -189,7 +190,7 @@ class OpenSearchEngine extends Engine
 
     protected function buildLaravelBuilderIntoOpensearch($builder)
     {
-        return (new QueryBuilder($this->cloudsearchSearch))->build($builder);
+        return (new Builder($this->cloudsearchSearch))->build($builder);
     }
 
     protected function performSearch(CloudsearchSearch $search)

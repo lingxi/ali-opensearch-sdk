@@ -1,6 +1,6 @@
 <?php
 
-namespace Lingxi\AliOpenSearch;
+namespace Lingxi\AliOpenSearch\Query;
 
 use Illuminate\Support\Facades\Config;
 use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
@@ -8,7 +8,7 @@ use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
 /**
  * laravel eloquent builder scheme to opensearch scheme
  */
-class QueryBuilder
+class Builder
 {
     protected $cloudsearchSearch;
 
@@ -32,6 +32,7 @@ class QueryBuilder
 
     /**
      * 搜索的应用
+     *
      * @param  array|string $index
      * @return null
      */
@@ -95,6 +96,7 @@ class QueryBuilder
 
     /**
      * 返回文档的最大数量
+     *
      * @see https://help.aliyun.com/document_detail/29156.html
      * @param  integer $limit
      * @return null
@@ -106,6 +108,7 @@ class QueryBuilder
 
     /**
      * 排序sort子句
+     *
      * @see https://help.aliyun.com/document_detail/29159.html
      * @param  array $orders
      * @return null

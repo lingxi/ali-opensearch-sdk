@@ -1024,7 +1024,6 @@ class CloudsearchSearch
     public function getRerankSize()
     {
         return $this->rerankSize;
-
     }
 
     /**
