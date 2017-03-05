@@ -8,6 +8,22 @@ class ExtendedBuilder extends \Laravel\Scout\Builder
     public $rawQuerys = [];
 
     /**
+     * @todo 这里先只是处理 = 的情况，需求来了就补上
+     *
+     * Add a constraint to the search query.
+     *
+     * @param  string  $field
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function where($field, $value)
+    {
+        $this->wheres[$field] = ['=', $value];
+
+        return $this;
+    }
+
+    /**
      * Add a constraint to the search query.
      *
      * @param  string  $field
