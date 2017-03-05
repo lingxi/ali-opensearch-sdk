@@ -152,4 +152,17 @@ class QueryStructureBuilder
 
         return is_null($value) && $isOperator && ! in_array($operator, ['=']);
     }
+
+    public function when($value, $callback, $default = null)
+    {
+        $builder = $this;
+
+        if ($value) {
+            $builder = call_user_func($callback, $builder);
+        } elseif ($default) {
+            $builder = call_user_func($default, $builder);
+        }
+
+        return $builder;
+    }
 }
