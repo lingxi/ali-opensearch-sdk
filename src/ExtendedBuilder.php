@@ -18,7 +18,11 @@ class ExtendedBuilder extends \Laravel\Scout\Builder
      */
     public function where($field, $value)
     {
-        $this->wheres[$field] = ['=', $value];
+        if (! is_array($value)) {
+            $value = ['=', $value];
+        }
+
+        $this->wheres[$field] = $value;
 
         return $this;
     }
