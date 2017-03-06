@@ -2,10 +2,13 @@
 
 namespace Lingxi\AliOpenSearch;
 
+use Exception;
 use Laravel\Scout\Engines\Engine;
 use Lingxi\AliOpenSearch\Query\Builder;
 use Laravel\Scout\Builder as ScoutBuilder;
 use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
+use Lingxi\AliOpenSearch\Exception\OpensearchRunException;
+use Lingxi\AliOpenSearch\Exception\OpensearchCallException;
 
 class OpenSearchEngine extends Engine
 {
@@ -195,7 +198,20 @@ class OpenSearchEngine extends Engine
 
     protected function performSearch(CloudsearchSearch $search)
     {
-        return json_decode($search->search(), true);
+        try {
+            $result = json_decode($search->search(), true);
+        } catch (Exception $e) {
+            throw new OpensearchCallException($e->getMessage());
+        }
+
+        if ($result['status'] == 'FAIL') {
+            $e = new OpensearchRunException($result['errors'][0]['message'], $result['errors'][0]['code']);
+            $e->setErrors($result['errors']);
+
+            throw $e;
+        }
+
+        return $result;
     }
 
     /**
