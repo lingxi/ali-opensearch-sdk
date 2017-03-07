@@ -24,6 +24,7 @@ class Builder
         $this->filters($builder->wheres, $builder->rawWheres);
         $this->hit($builder->limit ?: 20);
         $this->sort($builder->orders);
+        $this->addFields($builder->fields);
 
         $this->cloudsearchSearch->setFormat('json');
 
@@ -122,5 +123,16 @@ class Builder
         foreach ($orders as $key => $value) {
             $this->cloudsearchSearch->addSort($value['column'], $value['column'] == 'asc' ? CloudsearchSearch::SORT_INCREASE : CloudsearchSearch::SORT_DECREASE);
         }
+    }
+
+    /**
+     * 添加搜索字段
+     *
+     * @param   array  $fields
+     * @return  null
+     */
+    protected function addFields(array $fields)
+    {
+        $this->cloudsearchSearch->addFetchFields($fields);
     }
 }

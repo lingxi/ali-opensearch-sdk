@@ -5,7 +5,25 @@ namespace Lingxi\AliOpenSearch;
 class ExtendedBuilder extends \Laravel\Scout\Builder
 {
     public $rawWheres = [];
+
     public $rawQuerys = [];
+
+    public $fields = [];
+
+    /**
+     * Create a new search builder instance.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $query
+     * @param  Closure  $callback
+     * @return void
+     */
+    public function __construct($model, $query, $callback = null)
+    {
+        parent::__construct($model, $query, $callback);
+
+        $this->select();
+    }
 
     /**
      * @todo 这里先只是处理 = 的情况，需求来了就补上
@@ -44,14 +62,29 @@ class ExtendedBuilder extends \Laravel\Scout\Builder
         return $this;
     }
 
-    public function whereRaw(string $rawWhere)
+    public function select($fields = null)
+    {
+        if (empty($fields)) {
+            $fields = $this->model->getSearchableFields();
+
+            if (! is_array($fields)) {
+                $fields = explode(',', $fields);
+            }
+        }
+
+        $this->fields = array_merge($this->fields, $fields);
+
+        return $this;
+    }
+
+    public function whereRaw($rawWhere)
     {
         $this->rawWheres[] = $rawWhere;
 
         return $this;
     }
 
-    public function searchRaw(string $rawQuery)
+    public function searchRaw($rawQuery)
     {
         $this->rawQuerys[] = $rawQuery;
 
