@@ -21,7 +21,7 @@ class Builder
     {
         $this->index($builder->index ?: $builder->model->searchableAs());
         $this->query($builder->query, $builder->rawQuerys);
-        $this->filters($builder->wheres, $builder->rawWheres);
+        $this->filter($builder->filters, $builder->rawFilters);
         $this->hit($builder->limit ?: 20);
         $this->sort($builder->orders);
         $this->addFields($builder->fields);
@@ -52,14 +52,15 @@ class Builder
      * 过滤 filter 子句
      *
      * @see https://help.aliyun.com/document_detail/29158.html
-     * @param  array $wheres
+     * @param  array $filters
+     * @param  array $rawFilters
      * @return null
      */
-    protected function filters(array $wheres, array $rawWheres)
+    protected function filter(array $filters, array $rawFilters)
     {
-        foreach ($wheres as $key => $value) {
-            $operator = $value[0];
-            $value    = $value[1];
+        foreach ($filters as $filter) {
+            list($key, $operator, $value) = $filter;
+
             if (!is_numeric($value) && is_string($value)) {
                 // literal类型的字段值必须要加双引号，支持所有的关系运算，不支持算术运算
                 $value = '"' . $value . '"';
@@ -125,13 +126,7 @@ class Builder
         }
     }
 
-    /**
-     * 添加搜索字段
-     *
-     * @param   array  $fields
-     * @return  null
-     */
-    protected function addFields(array $fields)
+    protected function addFields($fields)
     {
         $this->cloudsearchSearch->addFetchFields($fields);
     }

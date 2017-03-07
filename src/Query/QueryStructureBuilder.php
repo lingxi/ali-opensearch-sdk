@@ -6,9 +6,12 @@ use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Lingxi\AliOpenSearch\Helper\Whenable;
 
 class QueryStructureBuilder
 {
+    use Whenable;
+
 	public $wheres = [];
 
     protected $grammar;
@@ -151,18 +154,5 @@ class QueryStructureBuilder
         $isOperator = in_array($operator, $this->operators);
 
         return is_null($value) && $isOperator && ! in_array($operator, ['=']);
-    }
-
-    public function when($value, $callback, $default = null)
-    {
-        $builder = $this;
-
-        if ($value) {
-            $builder = call_user_func($callback, $builder);
-        } elseif ($default) {
-            $builder = call_user_func($default, $builder);
-        }
-
-        return $builder;
     }
 }
