@@ -28,6 +28,13 @@ class OpenSearchEngine extends Engine
     protected $cloudsearchSearch;
 
     /**
+     * The search result.
+     *
+     * @var array
+     */
+    protected $searchResult = [];
+
+    /**
      * Create a new engine instance.
      *
      * @param  \Lingxi\AliOpenSearch\OpenSearchClient $opensearch
@@ -181,7 +188,13 @@ class OpenSearchEngine extends Engine
      */
     public function search(ScoutBuilder $builder)
     {
-        return $this->performSearch($this->buildLaravelBuilderIntoOpensearch($builder));
+        $searchKey = serialize($builder);
+
+        if (! isset($this->searchResult[$searchKey])) {
+            $this->searchResult[$searchKey] = $this->performSearch($this->buildLaravelBuilderIntoOpensearch($builder));
+        }
+
+        return $this->searchResult[$searchKey];
     }
 
     public function paginate(ScoutBuilder $builder, $perPage, $page)
