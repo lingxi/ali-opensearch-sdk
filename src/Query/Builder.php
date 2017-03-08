@@ -25,6 +25,7 @@ class Builder
         $this->hit($builder->limit ?: 20);
         $this->sort($builder->orders);
         $this->addFields($builder->fields);
+        $this->addAggregate($builder->aggregates);
 
         $this->cloudsearchSearch->setFormat('json');
 
@@ -129,5 +130,12 @@ class Builder
     protected function addFields($fields)
     {
         $this->cloudsearchSearch->addFetchFields($fields);
+    }
+
+    public function addAggregate($aggregates)
+    {
+        foreach ($aggregates as $aggregate) {
+            $this->cloudsearchSearch->addAggregate(...$aggregate);
+        }
     }
 }

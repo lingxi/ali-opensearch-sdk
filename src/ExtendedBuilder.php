@@ -82,6 +82,13 @@ class ExtendedBuilder
     public $fields = [];
 
     /**
+     * Aggregates.
+     *
+     * @var array
+     */
+    public $aggregates = [];
+
+    /**
      * Create a new search builder instance.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
@@ -209,6 +216,13 @@ class ExtendedBuilder
     public function searchRaw($rawQuery)
     {
         $this->rawQuerys[] = $rawQuery;
+
+        return $this;
+    }
+
+    public function addAggregate()
+    {
+        $this->aggregates[] = func_get_args();
 
         return $this;
     }
