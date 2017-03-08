@@ -258,6 +258,16 @@ class ExtendedBuilder
     }
 
     /**
+     * Get the facet from aggregate.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function facet($key)
+    {
+        return $this->engine()->facet($key, $this);
+    }
+
+    /**
      * Paginate the given query into a simple paginator.
      *
      * @param  int  $perPage

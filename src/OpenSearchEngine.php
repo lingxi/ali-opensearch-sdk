@@ -6,6 +6,7 @@ use Exception;
 use Laravel\Scout\Engines\Engine;
 use Lingxi\AliOpenSearch\Query\Builder;
 use Laravel\Scout\Builder as ScoutBuilder;
+use Illuminate\Database\Eloquent\Collection;
 use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
 use Lingxi\AliOpenSearch\Exception\OpensearchRunException;
 use Lingxi\AliOpenSearch\Exception\OpensearchCallException;
@@ -268,5 +269,23 @@ class OpenSearchEngine extends Engine
     private function getCloudSearchDoc($models)
     {
         return $this->opensearch->getCloudSearchDoc($models->first()->searchableAs());
+    }
+
+    public function facet($key, ExtendedBuilder $builder)
+    {
+        return Collection::make($this->mapFacet($key, $this->search($builder)));
+    }
+
+    protected function mapFacet($key, $results)
+    {
+        $facets = $results['result']['facet'];
+
+        foreach ($facets as $facet) {
+            if ($facet['key'] == $key) {
+                return $facet['items'];
+            }
+        }
+
+        return [];
     }
 }
