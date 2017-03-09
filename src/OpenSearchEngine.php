@@ -4,12 +4,13 @@ namespace Lingxi\AliOpenSearch;
 
 use Exception;
 use Laravel\Scout\Engines\Engine;
+use Illuminate\Support\Facades\Event;
 use Lingxi\AliOpenSearch\Query\Builder;
 use Laravel\Scout\Builder as ScoutBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
+use Lingxi\AliOpenSearch\Doc\Events\DocSyncEvent;
 use Lingxi\AliOpenSearch\Exception\OpensearchException;
-use Lingxi\AliOpenSearch\Exception\OpensearchRunException;
 use Lingxi\AliOpenSearch\Exception\OpensearchCallException;
 
 class OpenSearchEngine extends Engine
@@ -61,8 +62,14 @@ class OpenSearchEngine extends Engine
 
         foreach ($this->getSearchableData($models, ['update']) as $name => $value) {
             if (! empty($value['update'])) {
-                $doc->add($value['update'], $name);
-                $this->waitASecond();
+                try {
+                    $doc->add($value['update'], $name);
+                    $this->waitASecond();
+
+                    Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'add', true));
+                } catch (OpensearchException $e) {
+                    Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'add', false));
+                }
             }
         }
     }
@@ -81,8 +88,14 @@ class OpenSearchEngine extends Engine
         foreach ($this->getSearchableData($models) as $name => $value) {
             foreach ($value as $method => $items) {
                 if (! empty($items)) {
-                    $doc->$method($items, $name);
-                    $this->waitASecond();
+                    try {
+                        $doc->$method($items, $name);
+                        $this->waitASecond();
+
+                        Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, $method, true));
+                    } catct (OpensearchException $e) {
+                        Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, $method, false));
+                    }
                 }
             }
         }
@@ -122,8 +135,14 @@ class OpenSearchEngine extends Engine
             }
 
             if (! empty($toBeDeleteData)) {
-                $doc->delete($toBeDeleteData, $name);
-                $this->waitASecond();
+                try {
+                    $doc->delete($toBeDeleteData, $name);
+                    $this->waitASecond();
+
+                    Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'delete', true));
+                } catch (OpensearchException $e) {
+                    Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'delete', false));
+                }
             }
         }
     }
@@ -228,16 +247,9 @@ class OpenSearchEngine extends Engine
     protected function performSearch(CloudsearchSearch $search)
     {
         try {
-            $result = json_decode($search->search(), true);
+            $result = $search->search();
         } catch (Exception $e) {
             throw new OpensearchCallException($e->getMessage());
-        }
-
-        if ($result['status'] == 'FAIL') {
-            $e = new OpensearchRunException($result['errors'][0]['message'], $result['errors'][0]['code']);
-            $e->setErrors($result['errors']);
-
-            throw $e;
         }
 
         return $result;
@@ -308,10 +320,10 @@ class OpenSearchEngine extends Engine
     /**
      * Get the results of the given query mapped onto models.
      *
-     * @param  ExtendedBuilder  $builder
+     * @param  \Lingxi\AliOpenSearch\ScoutBuilder  $builder
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function get(ExtendedBuilder $builder)
+    public function get(ScoutBuilder $builder)
     {
         return Collection::make($this->map(
             $this->search($builder), $builder->model

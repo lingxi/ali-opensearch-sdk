@@ -21,6 +21,8 @@
 namespace Lingxi\AliOpenSearch\Sdk;
 
 use Exception;
+use Lingxi\AliOpenSearch\Exception\OpensearchRunException;
+use Lingxi\AliOpenSearch\Exception\OpensearchCallException;
 
 /**
  * Cloudsearch service。
@@ -273,10 +275,18 @@ class CloudsearchClient
             $params['Signature']        = $this->_sign_aliyun($params, $method);
         }
         if ($this->connect == 'curl') {
-            $result = $this->_curl($url, $params, $method);
+            $result = json_decode($this->_curl($url, $params, $method), true);
         } else {
-            $result = $this->_socket($url, $params, $method);
+            $result = json_decode($this->_socket($url, $params, $method), true);
         }
+
+        if ($result['status'] != 'OK') {
+            $e = new OpensearchRunException($result['errors'][0]['message'], $result['errors'][0]['code']);
+            $e->setErrors($result['errors']);
+
+            throw $e;
+        }
+
         return $result;
     }
 
@@ -468,7 +478,7 @@ class CloudsearchClient
         stream_set_timeout($socket, $this->timeout);
 
         if (!$socket) {
-            throw new Exception("Connect " . $parse['host'] . ' fail.');
+            throw new OpensearchCallException("Connect " . $parse['host'] . ' fail.');
         }
 
         $response = '';
