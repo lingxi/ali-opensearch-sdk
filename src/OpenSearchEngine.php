@@ -8,6 +8,7 @@ use Lingxi\AliOpenSearch\Query\Builder;
 use Laravel\Scout\Builder as ScoutBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
+use Lingxi\AliOpenSearch\Exception\OpensearchException;
 use Lingxi\AliOpenSearch\Exception\OpensearchRunException;
 use Lingxi\AliOpenSearch\Exception\OpensearchCallException;
 
@@ -239,7 +240,11 @@ class OpenSearchEngine extends Engine
     {
         $fields = $model->getSearchableFields();
 
-        if (is_array($fields)) {
+        if (empty($fields)) {
+            throw new OpensearchException('搜索字段不能为空');
+        }
+
+        if (count($fields) != 1) {
             return collect(array_map(function ($item) use ($fields) {
                 $result = [];
                 foreach ($fields as $field) {
@@ -247,6 +252,8 @@ class OpenSearchEngine extends Engine
                 }
                 return $result;
             }, $results['result']['items']));
+        } else {
+            $fields = $fields[0];
         }
 
         return $this->mapIds($results, $fields);

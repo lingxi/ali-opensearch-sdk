@@ -230,7 +230,7 @@ class ExtendedBuilder
             }
         }
 
-        $this->fields = array_merge($this->fields, $fields);
+        $this->fields = $fields;
 
         return $this;
     }
