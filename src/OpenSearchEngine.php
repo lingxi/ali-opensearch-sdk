@@ -291,6 +291,11 @@ class OpenSearchEngine extends Engine
         return $this->opensearch->getCloudSearchDoc($models->first()->searchableAs());
     }
 
+    public function get()
+    {
+        # code...
+    }
+
     public function facet($key, ExtendedBuilder $builder)
     {
         return Collection::make($this->mapFacet($key, $this->search($builder)));

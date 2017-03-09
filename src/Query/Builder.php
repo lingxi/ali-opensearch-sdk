@@ -72,7 +72,7 @@ class Builder
             $this->cloudsearchSearch->addFilter($key . $operator . $value, 'AND');
         }
 
-        foreach ($rawWheres as $key => $value) {
+        foreach ($rawFilters as $key => $value) {
             $this->cloudsearchSearch->addFilter($value, 'AND');
         }
     }
