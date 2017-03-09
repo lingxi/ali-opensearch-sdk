@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Event;
 use Lingxi\AliOpenSearch\Query\Builder;
 use Laravel\Scout\Builder as ScoutBuilder;
 use Illuminate\Database\Eloquent\Collection;
+use Lingxi\AliOpenSearch\Events\DocSyncEvent;
 use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
-use Lingxi\AliOpenSearch\Doc\Events\DocSyncEvent;
 use Lingxi\AliOpenSearch\Exception\OpensearchException;
 use Lingxi\AliOpenSearch\Exception\OpensearchCallException;
 
@@ -246,13 +246,7 @@ class OpenSearchEngine extends Engine
 
     protected function performSearch(CloudsearchSearch $search)
     {
-        try {
-            $result = $search->search();
-        } catch (Exception $e) {
-            throw new OpensearchCallException($e->getMessage());
-        }
-
-        return $result;
+        return $search->search();
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Lingxi\AliOpenSearch\Doc\Events;
+namespace Lingxi\AliOpenSearch\Events;
 
 class DocSyncEvent
 {
