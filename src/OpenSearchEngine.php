@@ -62,6 +62,7 @@ class OpenSearchEngine extends Engine
         foreach ($this->getSearchableData($models, ['update']) as $name => $value) {
             if (! empty($value['update'])) {
                 $doc->add($value['update'], $name);
+                $this->waitASecond();
             }
         }
     }
@@ -81,6 +82,7 @@ class OpenSearchEngine extends Engine
             foreach ($value as $method => $items) {
                 if (! empty($items)) {
                     $doc->$method($items, $name);
+                    $this->waitASecond();
                 }
             }
         }
@@ -106,7 +108,7 @@ class OpenSearchEngine extends Engine
         |
         */
         foreach ($this->getSearchableData($models, ['delete']) as $name => $value) {
-            if (! empty($value['delete'])) {
+            if (array_key_exists('delete', $value)) {
                 $toBeDeleteData = $value['delete'];
             } else {
                 $toBeDeleteData = $models->map(function ($model) {
@@ -121,8 +123,20 @@ class OpenSearchEngine extends Engine
 
             if (! empty($toBeDeleteData)) {
                 $doc->delete($toBeDeleteData, $name);
+                $this->waitASecond();
             }
         }
+    }
+
+    /**
+     * Sleep 100ms to avoid request frequently.
+     *
+     * @param  integer $microSeconds
+     * @return null
+     */
+    protected function waitASecond($microSeconds = 100000)
+    {
+        usleep($microSeconds);
     }
 
     /**
@@ -142,7 +156,7 @@ class OpenSearchEngine extends Engine
      */
     protected function getSearchableData($models, array $actions = ['delete', 'update'])
     {
-        // 获取应用的部表名
+        // 获取应用的全部表名
         $tableNames = array_keys($models->first()->toSearchableDocCallbacks());
         /*
         |--------------------------------------------------------------------------
@@ -158,14 +172,14 @@ class OpenSearchEngine extends Engine
         */
         $data = [];
         foreach ($tableNames as $name) {
-            // Delete 就是需要在 update 前面
-            foreach ($actions as $action) {
-                $data[$name][$action] = [];
-            }
+            $data[$name] = [];
         }
 
         foreach ($models as $model) {
             $callbacks = $model->toSearchableDocCallbacks($actions);
+
+            // delete 就是需要在 update 前面
+            ksort($a);
 
             foreach ($callbacks as $name => $callback) {
                 if (! empty($callback)) {
@@ -291,11 +305,26 @@ class OpenSearchEngine extends Engine
         return $this->opensearch->getCloudSearchDoc($models->first()->searchableAs());
     }
 
-    public function get()
+    /**
+     * Get the results of the given query mapped onto models.
+     *
+     * @param  ExtendedBuilder  $builder
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function get(ExtendedBuilder $builder)
     {
-        # code...
+        return Collection::make($this->map(
+            $this->search($builder), $builder->model
+        ));
     }
 
+    /**
+     * Get the facet from search results.
+     *
+     * @param  string  $key
+     * @param  ExtendedBuilder $builder
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function facet($key, ExtendedBuilder $builder)
     {
         return Collection::make($this->mapFacet($key, $this->search($builder)));
