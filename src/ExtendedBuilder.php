@@ -61,6 +61,13 @@ class ExtendedBuilder
     public $limit;
 
     /**
+     * The current page. "start" in open search query.
+     *
+     * @var int
+     */
+    public $page;
+
+    /**
      * Custom filter strings.
      *
      * @var array
@@ -82,11 +89,25 @@ class ExtendedBuilder
     public $fields = [];
 
     /**
+     * Distinct.
+     *
+     * @var array
+     */
+    public $distincts = [];
+
+    /**
      * Aggregates.
      *
      * @var array
      */
     public $aggregates = [];
+
+    /**
+     * Pair
+     *
+     * @var string
+     */
+    public $pair;
 
     /**
      * Create a new search builder instance.
@@ -157,6 +178,14 @@ class ExtendedBuilder
         return $this;
     }
 
+    public function forPage($page, $perPage = 20)
+    {
+        $this->page = $perPage;
+        $this->limit = $perPage;
+
+        return $this;
+    }
+
     /**
      * Add a constraint to the search query.
      *
@@ -220,9 +249,23 @@ class ExtendedBuilder
         return $this;
     }
 
+    public function addDistinct()
+    {
+        $this->distincts[] = func_get_args();
+
+        return $this;
+    }
+
     public function addAggregate()
     {
         $this->aggregates[] = func_get_args();
+
+        return $this;
+    }
+
+    public function setPair($pair)
+    {
+        $this->pair = $pair;
 
         return $this;
     }

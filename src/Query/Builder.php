@@ -22,10 +22,12 @@ class Builder
         $this->index($builder->index ?: $builder->model->searchableAs());
         $this->query($builder->query, $builder->rawQuerys);
         $this->filter($builder->filters, $builder->rawFilters);
-        $this->hit($builder->limit ?: 20);
+        $this->hit($builder->limit ?: 20, $builder->page ?: 1);
         $this->sort($builder->orders);
         $this->addFields($builder->fields);
+        $this->addDistinct($builder->distincts);
         $this->addAggregate($builder->aggregates);
+        $this->setPair($builder->pair);
 
         $this->cloudsearchSearch->setFormat('json');
 
@@ -108,9 +110,10 @@ class Builder
      * @param  integer $limit
      * @return null
      */
-    protected function hit($limit)
+    protected function hit($limit, $page)
     {
         $this->cloudsearchSearch->setHits($limit);
+        $this->cloudsearchSearch->setStartHit(($page - 1) * $limit);
     }
 
     /**
@@ -132,10 +135,24 @@ class Builder
         $this->cloudsearchSearch->addFetchFields($fields);
     }
 
-    public function addAggregate($aggregates)
+    protected function addDistinct($distincts)
+    {
+        foreach ($distincts as $distinct) {
+            $this->cloudsearchSearch->addDistinct(...$distinct);
+        }
+    }
+
+    protected function addAggregate($aggregates)
     {
         foreach ($aggregates as $aggregate) {
             $this->cloudsearchSearch->addAggregate(...$aggregate);
+        }
+    }
+
+    protected function setPair($pair)
+    {
+        if ($pair) {
+            $this->cloudsearchSearch->setPair($pair);
         }
     }
 }
