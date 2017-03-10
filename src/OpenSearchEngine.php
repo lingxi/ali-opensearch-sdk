@@ -93,7 +93,7 @@ class OpenSearchEngine extends Engine
                         $this->waitASecond();
 
                         Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, $method, true));
-                    } catct (OpensearchException $e) {
+                    } catch (OpensearchException $e) {
                         Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, $method, false));
                     }
                 }
@@ -198,13 +198,16 @@ class OpenSearchEngine extends Engine
             $callbacks = $model->toSearchableDocCallbacks($actions);
 
             // delete 就是需要在 update 前面
-            ksort($a);
+            ksort($callbacks);
 
             foreach ($callbacks as $name => $callback) {
                 if (! empty($callback)) {
                     foreach ($actions as $action) {
                         if (isset($callback[$action])) {
-                            $data[$name][$action] = array_merge($data[$name][$action], call_user_func($callback[$action]));
+                            $data[$name][$action] = array_merge(
+                                isset($data[$name][$action]) ? $data[$name][$action] : [],
+                                call_user_func($callback[$action])
+                            );
                         }
                     }
                 }
@@ -252,13 +255,14 @@ class OpenSearchEngine extends Engine
     /**
      * Map the given results to instances of the given model.
      *
-     * @param  mixed  $results
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  mixed $results
+     * @param  \Illuminate\Database\Eloquent\Model $model
      * @return \Illuminate\Support\Collection
+     * @throws OpensearchException
      */
     public function map($results, $model)
     {
-        $fields = $model->getSearchableFields();
+        $fields = $this->opensearch->getCloudSearchSearch()->getFetchFields();
 
         if (empty($fields)) {
             throw new OpensearchException('搜索字段不能为空');
