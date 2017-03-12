@@ -150,10 +150,12 @@ class OpenSearchEngine extends Engine
     /**
      * Sleep 100ms to avoid request frequently.
      *
+     * 经过测试 200ms 比较稳定
+     *
      * @param  integer $microSeconds
      * @return null
      */
-    protected function waitASecond($microSeconds = 100000)
+    protected function waitASecond($microSeconds = 200000)
     {
         usleep($microSeconds);
     }
