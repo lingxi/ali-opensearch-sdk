@@ -13,13 +13,16 @@ class DocSyncEvent
 	public $type;
 
 	public $success;
+	
+	public $message;
 
-	public function __construct($indexName, $tableName, $data, $type, $success = true)
+	public function __construct($indexName, $tableName, array $data, $type, $success = true, $message = '')
 	{
 		$this->data = $data;
 		$this->type = $type;
 		$this->success = $success;
-		$this->indexName = $indexName;
-		$this->tableName = $tableName;
+        $this->message = $message;
+        $this->indexName = $indexName;
+        $this->tableName = $tableName;
 	}
 }

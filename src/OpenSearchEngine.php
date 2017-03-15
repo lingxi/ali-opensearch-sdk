@@ -2,7 +2,6 @@
 
 namespace Lingxi\AliOpenSearch;
 
-use Exception;
 use Laravel\Scout\Engines\Engine;
 use Illuminate\Support\Facades\Event;
 use Lingxi\AliOpenSearch\Query\Builder;
@@ -11,7 +10,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Lingxi\AliOpenSearch\Events\DocSyncEvent;
 use Lingxi\AliOpenSearch\Sdk\CloudsearchSearch;
 use Lingxi\AliOpenSearch\Exception\OpensearchException;
-use Lingxi\AliOpenSearch\Exception\OpensearchCallException;
 
 class OpenSearchEngine extends Engine
 {
@@ -68,7 +66,7 @@ class OpenSearchEngine extends Engine
 
                     Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'add', true));
                 } catch (OpensearchException $e) {
-                    Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'add', false));
+                    Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'add', false), $e->getMessage());
                 }
             }
         }
@@ -94,7 +92,7 @@ class OpenSearchEngine extends Engine
 
                         Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, $method, true));
                     } catch (OpensearchException $e) {
-                        Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, $method, false));
+                        Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, $method, false, $e->getMessage()));
                     }
                 }
             }
@@ -141,7 +139,7 @@ class OpenSearchEngine extends Engine
 
                     Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'delete', true));
                 } catch (OpensearchException $e) {
-                    Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'delete', false));
+                    Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'delete', false, $e->getMessage()));
                 }
             }
         }
