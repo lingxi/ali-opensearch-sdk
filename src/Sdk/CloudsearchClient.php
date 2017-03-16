@@ -21,7 +21,6 @@
 namespace Lingxi\AliOpenSearch\Sdk;
 
 use Exception;
-use Illuminate\Support\Facades\Log;
 use Lingxi\AliOpenSearch\Exception\OpensearchRunException;
 use Lingxi\AliOpenSearch\Exception\OpensearchCallException;
 
@@ -284,8 +283,6 @@ class CloudsearchClient
         if ($result['status'] != 'OK') {
             $e = new OpensearchRunException($result['errors'][0]['message'], $result['errors'][0]['code']);
             $e->setErrors($result['errors']);
-
-            Log::error('opensearch error.', $result);
 
             throw $e;
         }
