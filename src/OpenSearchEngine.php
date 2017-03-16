@@ -67,6 +67,8 @@ class OpenSearchEngine extends Engine
                     Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'add', true));
                 } catch (OpensearchException $e) {
                     Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'add', false), $e->getMessage());
+
+                    throw $e;
                 }
             }
         }
@@ -93,6 +95,8 @@ class OpenSearchEngine extends Engine
                         Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, $method, true));
                     } catch (OpensearchException $e) {
                         Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, $method, false, $e->getMessage()));
+
+                        throw $e;
                     }
                 }
             }
@@ -140,6 +144,8 @@ class OpenSearchEngine extends Engine
                     Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'delete', true));
                 } catch (OpensearchException $e) {
                     Event::fire(new DocSyncEvent($models->first()->searchableAs(), $name, $value, 'delete', false, $e->getMessage()));
+
+                    throw $e;
                 }
             }
         }
