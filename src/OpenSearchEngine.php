@@ -61,6 +61,7 @@ class OpenSearchEngine extends Engine
         foreach ($this->getSearchableData($models, ['update']) as $name => $value) {
             if (! empty($value['update'])) {
                 try {
+                    $this->waitASecond();
                     $doc->add($value['update'], $name);
                     $this->waitASecond();
 
@@ -87,6 +88,7 @@ class OpenSearchEngine extends Engine
             foreach ($value as $method => $items) {
                 if (! empty($items)) {
                     try {
+                        $this->waitASecond();
                         $doc->$method($items, $name);
                         $this->waitASecond();
 
@@ -134,6 +136,7 @@ class OpenSearchEngine extends Engine
 
             if (! empty($toBeDeleteData)) {
                 try {
+                    $this->waitASecond();
                     $doc->delete($toBeDeleteData, $name);
                     $this->waitASecond();
 
@@ -148,12 +151,12 @@ class OpenSearchEngine extends Engine
     /**
      * Sleep 100ms to avoid request frequently.
      *
-     * 经过测试 200ms 比较稳定
+     * 经过测试 200ms 比较稳定, 在请求前后分别停止 100ms
      *
      * @param  integer $microSeconds
      * @return null
      */
-    protected function waitASecond($microSeconds = 200000)
+    protected function waitASecond($microSeconds = 100000)
     {
         usleep($microSeconds);
     }
