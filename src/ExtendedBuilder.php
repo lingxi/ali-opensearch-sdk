@@ -141,8 +141,6 @@ class ExtendedBuilder extends ScoutBuilder
     }
 
     /**
-     * @todo 这里先只是处理 = 的情况，需求来了就补上
-     *
      * Add a constraint to the search filter.
      *
      * @param  mixed  $field
