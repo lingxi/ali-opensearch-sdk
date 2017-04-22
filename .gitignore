@@ -2,3 +2,4 @@
 /.phpintel
 /.idea
 /test.php
+composer.lock
