@@ -179,7 +179,7 @@ class ExtendedBuilder extends ScoutBuilder
 
     public function forPage($page, $perPage = 20)
     {
-        $this->page = $perPage;
+        $this->page = $page;
         $this->limit = $perPage;
 
         return $this;
@@ -324,6 +324,8 @@ class ExtendedBuilder extends ScoutBuilder
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
         $perPage = $perPage ?: $this->model->getPerPage();
+
+        $this->forPage($page, $perPage);
 
         $results = Collection::make($engine->map(
             $rawResults = $engine->paginate($this, $perPage, $page), $this->model

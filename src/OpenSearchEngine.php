@@ -240,7 +240,6 @@ class OpenSearchEngine extends Engine
     public function paginate(ScoutBuilder $builder, $perPage, $page)
     {
         $cloudSearchSearch = $this->buildLaravelBuilderIntoOpensearch($builder);
-        $cloudSearchSearch->setStartHit($perPage * ($page - 1));
 
         return $this->performSearch($cloudSearchSearch);
     }
