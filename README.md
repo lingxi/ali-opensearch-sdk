@@ -39,6 +39,8 @@ return [
         'access_key_id'     => env('OPENSEARCH_ACCESS_KEY'),
 
         'access_key_secret' => env('OPENSEARCH_ACCESS_SECRET'),
+        
+        'host'              => env('OPENSEARCH_HOST'),
 
         'debug'             => env('OPENSEARCH_DEBUG'),
 
