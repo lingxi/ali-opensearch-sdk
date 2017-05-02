@@ -219,6 +219,22 @@ class ExtendedBuilder extends ScoutBuilder
         return $this;
     }
 
+    /**
+     * Add an default rank to order.
+     *
+     * @param  string  $direction
+     * @return $this
+     */
+    public function orderByRank($direction = 'desc')
+    {
+        $this->orders[] = [
+            'column' => 'RANK',
+            'direction' => strtolower($direction) == 'desc' ? 'desc' : 'asc',
+        ];
+
+        return $this;
+    }
+
     public function select($fields = null)
     {
         if (empty($fields)) {
