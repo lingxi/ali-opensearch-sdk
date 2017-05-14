@@ -159,9 +159,9 @@ class ExtendedBuilder extends ScoutBuilder
             }
 
             $this->filters[] = $value;
-
-            return $this;
         }
+
+        return $this;
     }
 
     /**
