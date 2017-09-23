@@ -126,7 +126,7 @@ class Builder
     protected function sort(array $orders)
     {
         foreach ($orders as $key => $value) {
-            $this->cloudsearchSearch->addSort($value['column'], $value['column'] == 'asc' ? CloudsearchSearch::SORT_INCREASE : CloudsearchSearch::SORT_DECREASE);
+            $this->cloudsearchSearch->addSort($value['column'], $value['direction'] == 'asc' ? CloudsearchSearch::SORT_INCREASE : CloudsearchSearch::SORT_DECREASE);
         }
     }
 
